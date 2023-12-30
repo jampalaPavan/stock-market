@@ -1,24 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route,Navigate } from 'react-router-dom';
+import Register from './Components/Auth/Register';
+import Login from './Components/Auth/Login';
+import Dashboard from './Components/Dashboard';
 
-function App() {
+import Header from './Header';
+import AuthService from './Authservice';
+import About from './Components/About';
+
+
+const PrivateRoute = ({ element }) => {
+  const isAuthenticated = AuthService.getCurrentUser() !== null;
+  return isAuthenticated ? element : <Navigate to="/login" replace />;
+};
+
+function App() {  
+
+  const isAuthenticated = AuthService.getCurrentUser() !== null;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    
+    <Router>
+    <Header/> 
+      <Routes>
+        
+        <Route path="/" element={<Register />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<About />} />
+        {}
+        <Route path="/login" element={<Login />} />
+          {isAuthenticated ? (
+            <Route path="/dashboard/*" element={<PrivateRoute element={<Dashboard />} />} />
+          ) : (
+            <Route path="/login" element={<Login/>} />
+          )}
+        {}
+
+      </Routes>
+    </Router>
+    </>
+    
   );
 }
 
